@@ -1,0 +1,24 @@
+{
+  "extends": [
+    "development"
+  ],
+  "hints": {
+    "compat-api/css": [
+      "default",
+      {
+        "ignore": [
+          "text-align: center",
+          "margin-block-start",
+          "margin-block-end",
+          "margin-inline-start",
+          "margin-inline-end",
+          "pointer-events",
+          "text-align: left",
+          "-webkit-line-clamp",
+          "-webkit-box-orient",
+          "text-align: right"
+        ]
+      }
+    ]
+  }
+}

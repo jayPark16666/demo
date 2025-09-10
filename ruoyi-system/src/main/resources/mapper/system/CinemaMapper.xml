@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.CinemaMapper">
+   <resultMap id="cinemaMapResult" type="com.ruoyi.system.domain.Cinema">
+       <id property="cinemaId" column="cinema_id" />
+       <result property="cinemaName" column="cinema_name" />
+       <result property="cinemaAddress" column="cinema_address" />
+       <result property="cinemaTel" column="cinema_tel" />
+       <result property="cinemaPoster" column="cinema_poster" />
+       <result property="price" column="price" />
+   </resultMap>
+    <select id="selectList" resultMap="cinemaMapResult">
+        select * from cinema
+        <where>
+            <if test="cinemaName != null and cinemaName != ''">
+                and cinema_name like '%${cinemaName}%'
+            </if>
+        </where>
+    </select>
+    <select id="selectCinema" resultMap="cinemaMapResult">
+        select * from cinema where cinema_id = #{cinemaId}
+    </select>
+    <insert id="insertCinema">
+        insert into cinema (cinema_name, cinema_address, cinema_tel, cinema_poster)
+        values (#{cinemaName}, #{cinemaAddress}, #{cinemaTel}, #{cinemaPoster})
+    </insert>
+    <update id="updateCinema">
+        update cinema set cinema_name = #{cinemaName}, cinema_address = #{cinemaAddress}, cinema_tel = #{cinemaTel}, cinema_poster = #{cinemaPoster} where cinema_id = #{cinemaId}
+    </update>
+    <delete id="deleteCinema">
+        delete from cinema where cinema_id = #{cinemaId}
+    </delete>
+    <select id="frontCinemaList" resultMap="cinemaMapResult">
+        SELECT h.cinema_id,c.cinema_name,c.cinema_address,MIN(schedule_price) price
+        from `schedule` s LEFT JOIN hall h on s.hall_id=h.hall_id LEFT JOIN cinema c on h.cinema_id=c.cinema_id
+        WHERE s.movie_id=#{movieId}
+       GROUP BY h.cinema_id
+    </select>
+</mapper>

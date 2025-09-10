@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.HallMapper">
+    <resultMap id="BaseResultMap" type="com.ruoyi.system.domain.Hall">
+        <id property="hallId" column="hall_id" />
+        <result property="hallName" column="hall_name" />
+        <result property="cinemaId" column="cinema_id" />
+        <result property="hallRow" column="hall_row" />
+        <result property="hallCol" column="hall_col" />
+        <result property="cinemaName" column="cinema_name"></result>
+    </resultMap>
+    <select id="selectList" resultMap="BaseResultMap">
+        select h.*,c.cinema_name from hall h left join cinema c on h.cinema_id = c.cinema_id
+        <where>
+            <if test="hallName != null and hallName != ''">
+                and hall_name like '%${hallName}%'
+            </if>
+            <if test="cinemaName != null and cinemaName != ''">
+                and c.cinema_name like '%${cinemaName}%'
+            </if>
+
+        </where>
+        order by h.hall_id  desc
+    </select>
+    <select id="selectHall" resultMap="BaseResultMap">
+        select * from hall where hall_id = #{hallId}
+    </select>
+    <insert id="insertHall">
+        insert into hall (hall_name, cinema_id, hall_row, hall_col)
+        values (#{hallName}, #{cinemaId}, #{hallRow}, #{hallCol})
+    </insert>
+    <update id="updateHall">
+        update hall set hall_name = #{hallName}, cinema_id = #{cinemaId}, hall_row = #{hallRow}, hall_col = #{hallCol} where hall_id = #{hallId}
+    </update>
+    <delete id="deleteHall">
+        delete from hall where hall_id = #{hallId}
+    </delete>
+    <select id="selectHallByCinemaId" resultMap="BaseResultMap">
+        select * from hall where cinema_id = #{cinemaId}
+    </select>
+</mapper>

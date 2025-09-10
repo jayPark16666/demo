@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.ScheduleMapper">
+    <resultMap id="BaseResultMap" type="com.ruoyi.system.domain.Schedule">
+
+        <id property="scheduleId" column="schedule_id" />
+        <result property="hallId" column="hall_id" />
+        <result property="movieId" column="movie_id" />
+        <result property="scheduleStartTime" column="schedule_startTime" />
+        <result property="schedulePrice" column="schedule_price" />
+        <result property="scheduleRemain" column="schedule_remain" />
+        <result property="scheduleState" column="schedule_state" />
+        <result property="hallName" column="hall_name"></result>
+        <result property="cinemaName" column="cinema_name"></result>
+        <result property="movieName" column="movie_cn_name"></result>
+        <result property="cinemaId" column="cinema_id"></result>
+    </resultMap>
+    <select id="selectList" resultMap="BaseResultMap">
+select s.*,h.hall_name,c.cinema_name,m.movie_cn_name
+from schedule s
+    left join hall h on s.hall_id = h.hall_id
+    left join cinema c on h.cinema_id = c.cinema_id
+    left join movie m on s.movie_id = m.movie_id
+<where>
+    <if test="hallName != null and hallName != ''">
+        and h.hall_name like '%${hallName}%'
+    </if>
+    <if test="cinemaName != null and cinemaName != ''">
+        and c.cinema_name like '%${cinemaName}%'
+    </if>
+    <if test="movieName != null and movieName != ''">
+        and m.movie_cn_name like '%${movieName}%'
+    </if>
+</where>
+order by s.schedule_id desc
+    </select>
+    <select id="selectById" resultMap="BaseResultMap">
+        select s.*, h.cinema_id from schedule s left join hall h on s.hall_id = h.hall_id where schedule_id = #{scheduleId}
+    </select>
+    <insert id="insertSchedule">
+insert into schedule (hall_id,movie_id,schedule_startTime,schedule_price,schedule_remain,schedule_state)
+values (#{hallId},#{movieId},#{scheduleStartTime},#{schedulePrice},#{scheduleRemain},#{scheduleState})
+
+    </insert>
+    <update id="updateSchedule">
+update schedule
+set hall_id = #{hallId},movie_id = #{movieId},
+    schedule_startTime = #{scheduleStartTime},schedule_price = #{schedulePrice},
+    schedule_remain = #{scheduleRemain},schedule_state = #{scheduleState}
+where schedule_id = #{scheduleId}
+    </update>
+
+    <update id="updateScheduleState">
+            update schedule
+            set schedule_state = #{scheduleState}
+            where schedule_id = #{scheduleId}
+    </update>
+    <select id="frontScheduleList" resultMap="BaseResultMap">
+        SELECT s.schedule_id,s.hall_id , h.hall_name,DATE_FORMAT(s.schedule_startTime,'%H:%i')schedule_startTime,schedule_price
+        FROM `schedule` s LEFT JOIN hall h on s.hall_id=h.hall_id
+         WHERE movie_id=#{movieId} and h.cinema_id=#{cinemaId} and schedule_startTime>=SYSDATE()
+    </select>
+</mapper>
